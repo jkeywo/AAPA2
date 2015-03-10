@@ -2,10 +2,15 @@
 
 #pragma once
 
+
+#include "Grid/Tile.h"
 #include "GameFramework/GameMode.h"
 #include "AAPA2GameMode.generated.h"
 
-class AGrid;
+class UAI;
+class UDamagable;
+class UTileMover;
+class UWeapon;
 
 UCLASS()
 class AAPA2_API AAAPA2GameMode : public AGameMode
@@ -14,4 +19,21 @@ class AAPA2_API AAAPA2GameMode : public AGameMode
 	
 public:
 	
+	virtual void RegisterWeapon( UWeapon* Weapon );
+	virtual void UnregisterWeapon( UWeapon* Weapon );
+	virtual void RegisterMover( UTileMover* Mover );
+	virtual void UnregisterMover( UTileMover* Mover );
+	virtual void RegisterTarget(UDamagable* Target);
+	virtual void UnregisterTarget(UDamagable* Target);
+	virtual void RegisterAI(UAI* AI);
+	virtual void UnregisterAI(UAI* AI);
+
+	UFUNCTION(BlueprintCallable, Category = Turn)
+	virtual void ProcessTurn();
+
+protected:
+	TSet< UAI* > AllAI[EAllieganceEnum::Count];
+	TSet< UWeapon* > AllWeapons[EAllieganceEnum::Count];
+	TSet< UTileMover* > AllMovers[EAllieganceEnum::Count];
+	TSet< UDamagable* > AllTargets[EAllieganceEnum::Count];
 };

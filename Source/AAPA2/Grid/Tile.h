@@ -14,7 +14,9 @@ enum class EAllieganceEnum : uint8
 	AE_Ally 	UMETA(DisplayName = "Ally"),
 	AE_Neutral	UMETA(DisplayName = "Neutral"),
 	AE_Enemy	UMETA(DisplayName = "Enemy"),
-	AE_None		UMETA(DisplayName = "None")
+	AE_None		UMETA(DisplayName = "None"),
+
+	Count
 };
 
 UCLASS()

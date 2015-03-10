@@ -4,10 +4,12 @@
 #include "TileMover.h"
 
 #include "Grid/Grid.h"
+#include "AAPA2GameMode.h"
 
 // Sets default values for this component's properties
 UTileMover::UTileMover()
-	: MoveTime(0.0f)
+	: Facing(0)
+	, MoveTime(0.0f)
 	, MoveProgress(0.0f)
 	, OccupiedTile(nullptr)
 {
@@ -35,6 +37,22 @@ void UTileMover::InitializeComponent()
 	if (ControlTime)
 	{
 		GetWorld()->GetWorldSettings()->TimeDilation = 0.0f;
+	}
+
+	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode != nullptr)
+	{
+		GameMode->RegisterMover(this);
+	}
+}
+void UTileMover::UninitializeComponent()
+{
+	Super::UninitializeComponent();
+
+	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode != nullptr)
+	{
+		GameMode->UnregisterMover(this);
 	}
 }
 
@@ -84,6 +102,8 @@ void UTileMover::Move(int32 Direction, float OverTime)
 	}
 
 	MoveToTile(NewTile, OverTime);
+
+	Facing = Direction;
 }
 
 void UTileMover::MoveToTile(ATile* NewTile, float OverTime)

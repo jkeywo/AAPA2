@@ -18,12 +18,15 @@ public:
 	UTileMover();
 
 	virtual void InitializeComponent() override;
+	virtual void UninitializeComponent() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool ControlTime;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TWeakObjectPtr<ATile> CurrentTile;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 Facing;
 
 	UFUNCTION(BlueprintCallable, Category = Move)
 	void Move(int32 Direction, float OverTime);
@@ -42,6 +45,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAllieganceEnum Alliegence;
+
+	virtual void ProcessTurn() {}
 
 protected:
 	void SnapToTile(ATile* Tile);
