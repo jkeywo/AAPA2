@@ -49,6 +49,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = Events)
 	void OnDeselected();
 
+	UFUNCTION(BlueprintCallable, Category = Grid)
+	ATile* GetNeighbour( int32 Direction);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Highlight;
 

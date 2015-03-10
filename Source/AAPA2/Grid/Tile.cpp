@@ -54,3 +54,8 @@ bool ATile::IsSelected()
 {
 	return Grid->GetSelectedTile() == this;
 }
+
+ATile* ATile::GetNeighbour(int32 Direction)
+{
+	return Grid->GetTileInDirection(this, Direction);
+}

@@ -9,9 +9,8 @@
 // Sets default values for this component's properties
 UTileMover::UTileMover()
 	: Facing(0)
-	, MoveTime(0.0f)
-	, MoveProgress(0.0f)
-	, OccupiedTile(nullptr)
+	, MoveProgress(1.0f)
+	, TargetTile(nullptr)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -30,13 +29,9 @@ void UTileMover::InitializeComponent()
 	// Snap to nearest grid point
 	if (AGrid::GetStaticGrid() && GetOwner())
 	{
-		CurrentTile = AGrid::GetStaticGrid()->GetTileFromWorldPosition(GetOwner()->GetActorLocation());
+		ATile* StartingTile = AGrid::GetStaticGrid()->GetTileFromWorldPosition(GetOwner()->GetActorLocation());
+		SetOccupiedTile(StartingTile);
 		SnapToTile(CurrentTile.Get());
-		SetOccupiedTile(CurrentTile.Get());
-	}
-	if (ControlTime)
-	{
-		GetWorld()->GetWorldSettings()->TimeDilation = 0.0f;
 	}
 
 	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
@@ -63,118 +58,99 @@ void UTileMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorComp
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
 	// If moving, move
-	if (Path.Num() > 0)
+	if (MoveProgress < 1.0f)
 	{ 
-		MoveProgress += DeltaTime / MoveTime;
+		MoveProgress += DeltaTime;
 
 		if (MoveProgress >= 1.0f)
 		{
-			CurrentTile = Path[0];
-			Path.RemoveAt(0);
-			SnapToTile(CurrentTile.Get());
-			MoveProgress -= 1.0f;
+			SnapToTile(TargetTile.Get());
+			TargetTile = nullptr;
 		}
-
-		if (Path.Num() > 0)
+		else
 		{
-			GetOwner()->SetActorLocation(FMath::Lerp(CurrentTile->GetActorLocation(), Path[0]->GetActorLocation(), MoveProgress));
-			FRotator xTargetDir = (Path[0]->GetActorLocation() - CurrentTile->GetActorLocation()).Rotation();
+			GetOwner()->SetActorLocation(FMath::Lerp(CurrentTile->GetActorLocation(), TargetTile->GetActorLocation(), MoveProgress));
+			FRotator xTargetDir = (TargetTile->GetActorLocation() - CurrentTile->GetActorLocation()).Rotation();
 			GetOwner()->SetActorRotation(FMath::Lerp(GetOwner()->GetActorRotation(), xTargetDir, MoveProgress));
 		}
-
-		if (ControlTime && Path.Num() == 0)
-		{
-			GetWorld()->GetWorldSettings()->TimeDilation = 0.0f;
-		}
 	}
 }
 
-void UTileMover::Move(int32 Direction, float OverTime)
+bool UTileMover::Move(int32 Direction)
 {
-	ATile* NewTile = nullptr;
-	if (Path.Num() == 0)
+	ATile* NewTile = AGrid::GetStaticGrid()->GetTileInDirection(CurrentTile.Get(), Direction);
+	if (!NewTile->Blocked && NewTile->Occupier == nullptr)
 	{
-		NewTile = AGrid::GetStaticGrid()->GetTileInDirection(CurrentTile.Get(), Direction);
+		TargetTile = NewTile;
+		Facing = Direction;
+		return true;
 	}
-	else
-	{
-		NewTile = AGrid::GetStaticGrid()->GetTileInDirection(Path.Top(), Direction);
-	}
-
-	MoveToTile(NewTile, OverTime);
-
-	Facing = Direction;
+	return false;
 }
 
-void UTileMover::MoveToTile(ATile* NewTile, float OverTime)
+bool UTileMover::MoveTowardsTile(ATile* NewTile)
 {
-	if (NewTile != nullptr)
+	ATile* StartTile = CurrentTile.Get();
+	TArray<ATile*> NewPath;
+	if (AGrid::GetStaticGrid()->PathTo(StartTile, NewTile, NewPath) && NewPath.Num() > 0)
 	{
-		if (NewTile->Blocked || NewTile->Occupier != nullptr)
+		if (!NewPath[0]->Blocked && NewPath[0]->Occupier == nullptr)
 		{
-			return;
+			for (int i = 0; i < 6; i++)
+			{
+				if (NewPath[0] == StartTile->GetNeighbour(i))
+				{
+					Facing = i;
+					break;
+				}
+			} 
+			TargetTile = NewPath[0];
+			return true;
 		}
+	}
+	return false;
+}
 
-		Path.Push(NewTile);
 
-		MoveTime = OverTime / Path.Num();
-		if (ControlTime)
-		{
-			GetWorld()->GetWorldSettings()->TimeDilation = 1.0f;
-		}
-
+bool UTileMover::TeleportToTile(ATile* NewTile)
+{
+	if (!NewTile->Blocked && NewTile->Occupier == nullptr)
+	{
 		SetOccupiedTile(NewTile);
+		SnapToTile(CurrentTile.Get());
+		return true;
 	}
-}
-void UTileMover::MoveTowardsTile(ATile* NewTile, float OverTime)
-{
-	ATile* StartTile = Path.Num() == 0 ? CurrentTile.Get() : Path.Top();
-	TArray<ATile*> NewPath;
-	if (AGrid::GetStaticGrid()->PathTo(StartTile, NewTile, NewPath) && NewPath.Num() > 0)
-	{
-		MoveToTile(NewPath[0], OverTime);
-	}
+	return false;
 }
 
-void UTileMover::PathToTile(ATile* NewTile, float Speed)
+void UTileMover::ProcessTurn()
 {
-	ATile* StartTile = Path.Num() == 0 ? CurrentTile.Get() : Path.Top();
-	TArray<ATile*> NewPath;
-	if (AGrid::GetStaticGrid()->PathTo(StartTile, NewTile, NewPath) && NewPath.Num() > 0)
+	if(TargetTile != nullptr)
 	{
-		MoveTime += Speed * NewPath.Num();
-		Path += NewPath;
-		SetOccupiedTile(Path.Top());
-	}
-}
-
-void UTileMover::TeleportToTile(ATile* NewTile)
-{
-	Path.Empty();
-	CurrentTile = NewTile;
-	SnapToTile(CurrentTile.Get());
-	SetOccupiedTile(NewTile);
-}
-
-void UTileMover::SnapToTile(ATile* Tile)
-{
-	if (Tile != nullptr)
-	{
-		GetOwner()->SetActorLocation(Tile->GetActorLocation());
+		MoveProgress = 0.0f;
+		SetOccupiedTile(TargetTile.Get());
 	}
 }
 
 void UTileMover::SetOccupiedTile(ATile* Tile)
 {
-	if (OccupiedTile.Get() && OccupiedTile.Get()->Occupier == GetOwner())
+	check(Tile != nullptr);
+	if (CurrentTile.Get() && CurrentTile.Get()->Occupier == GetOwner())
 	{
-		OccupiedTile->Occupier = nullptr;
-		OccupiedTile->Alliegence = EAllieganceEnum::AE_None;
+		CurrentTile->Occupier = nullptr;
+		CurrentTile->Alliegence = EAllieganceEnum::AE_None;
 	}
-	OccupiedTile = Tile;
-	if (OccupiedTile != nullptr)
+	CurrentTile = Tile;
+	if (CurrentTile != nullptr)
 	{ 
-		OccupiedTile->Occupier = GetOwner();
-		OccupiedTile->Alliegence = Alliegence;
+		CurrentTile->Occupier = GetOwner();
+		CurrentTile->Alliegence = Alliegence;
+	}
+}
+void UTileMover::SnapToTile(ATile* Tile)
+{
+	if (Tile != nullptr)
+	{
+		GetOwner()->SetActorLocation(Tile->GetActorLocation());
 	}
 }

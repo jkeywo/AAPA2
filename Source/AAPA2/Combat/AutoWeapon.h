@@ -14,7 +14,7 @@ class AAPA2_API UAutoWeapon : public UWeapon
 	GENERATED_BODY()
 
 public:
-	virtual void ProcessTurn();
+	virtual void ProcessTurn_PostMove();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int32 Damage;

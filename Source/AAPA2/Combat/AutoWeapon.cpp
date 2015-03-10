@@ -14,7 +14,7 @@ void Rotate60DegreesClockwise(FVector2D& Position)
 	Position.X = X;
 }
 
-void UAutoWeapon::ProcessTurn()
+void UAutoWeapon::ProcessTurn_PostMove()
 {
 	UTileMover* Mover = Cast<UTileMover>( GetOwner()->GetComponentByClass( UTileMover::StaticClass() ) );
 	// get hexes in arc

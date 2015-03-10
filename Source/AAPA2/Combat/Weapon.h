@@ -23,6 +23,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAllieganceEnum Alliegence;
 
-	virtual void ProcessTurn() {}
-	
+	virtual void ProcessTurn_PreMove() {}
+	virtual void ProcessTurn_PostMove() {}
+
 };

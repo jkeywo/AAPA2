@@ -55,7 +55,7 @@ void AAAPA2GameMode::ProcessTurn()
 		}
 		for (UWeapon* Weapon : AllWeapons[i])
 		{
-			Weapon->ProcessTurn();
+			Weapon->ProcessTurn_PreMove();
 		}
 		for (UTileMover* Mover : AllMovers[i])
 		{
@@ -63,7 +63,7 @@ void AAAPA2GameMode::ProcessTurn()
 		}
 		for (UWeapon* Weapon : AllWeapons[i])
 		{
-			Weapon->ProcessTurn();
+			Weapon->ProcessTurn_PostMove();
 		}
 	}	
 }

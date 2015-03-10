@@ -21,38 +21,29 @@ public:
 	virtual void UninitializeComponent() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool ControlTime;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TWeakObjectPtr<ATile> CurrentTile;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 Facing;
 
 	UFUNCTION(BlueprintCallable, Category = Move)
-	void Move(int32 Direction, float OverTime);
+	bool Move(int32 Direction);
 
 	UFUNCTION(BlueprintCallable, Category = Move)
-	void MoveToTile(ATile* Tile, float OverTime);
+	bool MoveTowardsTile(ATile* Tile);
 
 	UFUNCTION(BlueprintCallable, Category = Move)
-	void MoveTowardsTile(ATile* Tile, float OverTime);
-
-	UFUNCTION(BlueprintCallable, Category = Move)
-	void PathToTile(ATile* Tile, float Speed);
-
-	UFUNCTION(BlueprintCallable, Category = Move)
-	void TeleportToTile( ATile* Tile );
+	bool TeleportToTile( ATile* Tile );
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAllieganceEnum Alliegence;
 
-	virtual void ProcessTurn() {}
+	virtual void ProcessTurn();
 
 protected:
 	void SnapToTile(ATile* Tile);
 	void SetOccupiedTile(ATile* Tile);
-	float MoveTime;
+
 	float MoveProgress;
-	TArray<ATile*> Path;
-	TWeakObjectPtr<ATile> OccupiedTile;
+	TWeakObjectPtr<ATile> TargetTile;
 };
