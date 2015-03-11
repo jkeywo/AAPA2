@@ -26,14 +26,14 @@ public:
 	virtual void ApplyDamage( int32 Amount, FVector Origin );
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	virtual void ApplyDamageToSide(int32 Amount, int32 Side);
-	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual void OnDestroyed();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAllieganceEnum Alliegence;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Starting Health")
 	bool HasShields;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Starting Health")
+	bool HasDirectionalShields;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Starting Health")
 	int32 ShieldRechargeTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Starting Health")
@@ -48,4 +48,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Current Health")
 	int32 HullState;
 
+	//UFUNCTION(BlueprintImplementableEvent, Category = Events)
+	//virtual void DamagableDestroyed();
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDestroyedDelegate);
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnDestroyedDelegate OnDestroyed;
 };

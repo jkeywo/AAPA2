@@ -38,10 +38,12 @@ void UWave::ProcessTurn()
 			// Spawn in enemy
 			if (Tile != nullptr)
 			{
-				AActor* Enemy = GetOwner()->GetWorld()->SpawnActor<AActor>(SpawnType, Tile->GetActorLocation(), FRotator::ZeroRotator);
+				FVector Position = Tile->GetActorLocation();
+				AActor* Enemy = GetOwner()->GetWorld()->SpawnActor<AActor>(SpawnType, Position, FRotator::ZeroRotator);
 				if (Enemy)
 				{
 					Enemy->AttachRootComponentToActor(GetOwner());
+					Enemy->SetActorLocation(Position);
 				}
 			}
 		}

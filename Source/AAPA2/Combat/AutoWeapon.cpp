@@ -16,6 +16,12 @@ void Rotate60DegreesClockwise(FVector2D& Position)
 
 void UAutoWeapon::ProcessTurn_PreMove()
 {
+	while (Beams.Num() > 0)
+	{
+		UParticleSystemComponent* ParticleTemp = Beams.Pop();
+		ParticleTemp->DestroyComponent();
+	}
+	
 	if (FirePreMove)
 	{
 		Fire();
@@ -52,8 +58,21 @@ void UAutoWeapon::Fire()
 				if (TargetComponent && Alliegance::IsHostile(Mover->Alliegence, TargetComponent->Alliegence))
 				{
 					TargetComponent->ApplyDamage(Damage, GetOwner()->GetActorLocation());
-					// Play PFX
 
+					UParticleSystemComponent* ParticleTemp = UGameplayStatics::SpawnEmitterAttached(Beam, 
+						GetOwner()->GetRootComponent(), NAME_None, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), 
+						EAttachLocation::KeepWorldPosition, true);
+					if (ParticleTemp)
+					{
+						ParticleTemp->InstanceParameters.Add(FParticleSysParam());
+						ParticleTemp->InstanceParameters[0].Name = "BeamSource";
+						ParticleTemp->InstanceParameters[0].Actor = GetOwner();
+						ParticleTemp->InstanceParameters.Add(FParticleSysParam());
+						ParticleTemp->InstanceParameters[1].Name = "BeamTarget";
+						ParticleTemp->InstanceParameters[1].Actor = TargetActor;
+						
+						Beams.Add(ParticleTemp);
+					}
 				}
 			}
 		}

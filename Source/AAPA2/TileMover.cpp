@@ -79,12 +79,20 @@ void UTileMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorComp
 
 bool UTileMover::Move(int32 Direction)
 {
-	ATile* NewTile = AGrid::GetStaticGrid()->GetTileInDirection(CurrentTile.Get(), Direction);
-	if (!NewTile->Blocked && NewTile->Occupier == nullptr)
+	if (Direction == (Facing + 3) % 6)
 	{
-		TargetTile = NewTile;
+		TargetTile = CurrentTile;
 		Facing = Direction;
-		return true;
+	}
+	else
+	{
+		ATile* NewTile = AGrid::GetStaticGrid()->GetTileInDirection(CurrentTile.Get(), Direction);
+		if (!NewTile->Blocked && NewTile->Occupier == nullptr)
+		{
+			TargetTile = NewTile;
+			Facing = Direction;
+			return true;
+		}
 	}
 	return false;
 }
@@ -97,15 +105,24 @@ bool UTileMover::MoveTowardsTile(ATile* NewTile)
 	{
 		if (!NewPath[0]->Blocked && NewPath[0]->Occupier == nullptr)
 		{
+			int32 Direction = 0;
 			for (int i = 0; i < 6; i++)
 			{
 				if (NewPath[0] == StartTile->GetNeighbour(i))
 				{
-					Facing = i;
+					Direction = i;
 					break;
 				}
-			} 
-			TargetTile = NewPath[0];
+			}
+			if (Direction == (Facing + 3) % 6)
+			{
+				TargetTile = CurrentTile;
+			}
+			else
+			{
+				TargetTile = NewPath[0];
+			}
+			Facing = Direction;
 			return true;
 		}
 	}

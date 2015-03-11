@@ -27,10 +27,13 @@ public:
 	int32 RangeMax;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int32 RangeMin;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	bool FirePreMove;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	UParticleSystem* Beam;
 
 protected:
 	void Fire();
+
+	TArray<UParticleSystemComponent*> Beams;
 };

@@ -6,7 +6,7 @@
 #include "Wave.generated.h"
 
 
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class AAPA2_API UWave : public UAI
 {
 	GENERATED_BODY()

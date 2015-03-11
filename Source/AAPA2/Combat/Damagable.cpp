@@ -29,7 +29,10 @@ void UDamagable::InitializeComponent()
 	ArmourStates.Empty();
 	for (int i = 0; i < 4; i++)
 	{ 
-		ShieldStates.Add( HasShields ? 0 : -1 );
+		if (HasDirectionalShields || i == 0)
+		{
+			ShieldStates.Add(HasShields ? 0 : -1);
+		}
 		ArmourStates.Add(HasArmour);
 	}
 	HullState = MaxHull;
@@ -90,9 +93,13 @@ void UDamagable::ApplyDamageToSide(int32 Amount, int32 Side)
 {
 	while (Amount > 0)
 	{
-		if (ShieldStates[Side] == 0)
+		if (HasDirectionalShields && ShieldStates[Side] == 0)
 		{
 			ShieldStates[Side] = ShieldRechargeTime;
+		}
+		else if (!HasDirectionalShields && ShieldStates[0] == 0)
+		{
+			ShieldStates[0] = ShieldRechargeTime;
 		}
 		else if (ArmourStates[Side])
 		{
@@ -103,13 +110,10 @@ void UDamagable::ApplyDamageToSide(int32 Amount, int32 Side)
 			HullState -= 1;
 			if (HullState == 0)
 			{
-				OnDestroyed();
+				OnDestroyed.Broadcast();
 			}
 		}
 		Amount -= 1;
 	}
 }
-void UDamagable::OnDestroyed()
-{
-	GetOwner()->Destroy();
-}
+

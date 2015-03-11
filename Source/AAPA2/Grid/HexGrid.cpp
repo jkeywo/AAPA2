@@ -199,7 +199,11 @@ bool AHexGrid::PathTo(ATile* Start, ATile* End, TArray<ATile*>& Path)
 			}
 			while( ReversePath.Num() > 0 )
 			{
-				Path.Add( ReversePath.Pop() );
+				ATile* Tile = ReversePath.Pop();
+				if (Tile && !Tile->Blocked && Tile->Occupier == nullptr)
+				{
+					Path.Add(Tile);
+				}
 			}
 			return true;
 		}
@@ -209,7 +213,10 @@ bool AHexGrid::PathTo(ATile* Start, ATile* End, TArray<ATile*>& Path)
 			// if closed or blocked, continue	
 			if (Neighbour == nullptr || Neighbour->Blocked || Neighbour->Occupier != nullptr)
 			{ 
-				continue;
+				if (End != Neighbour)
+				{
+					continue;
+				}
 			}
 			if ( ClosedSet.FindByKey(Neighbour->Index) != nullptr )
 			{
