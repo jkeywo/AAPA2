@@ -27,7 +27,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Tiles)
 	virtual ATile* GetTileByCoordinates(FVector2D Coordinates);
 	UFUNCTION(BlueprintCallable, Category = Tiles)
-	virtual ATile* GetTileInDirection(ATile* Tile, int32 Direction);
+	virtual ATile* GetTileInDirection(ATile* Tile, int32 Direction, int32 Distance = 1);
 	UFUNCTION(BlueprintCallable, Category = Tiles)
 	virtual ATile* GetTileFromWorldPosition(FVector Position);
 

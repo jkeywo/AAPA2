@@ -14,30 +14,47 @@ void Rotate60DegreesClockwise(FVector2D& Position)
 	Position.X = X;
 }
 
+void UAutoWeapon::ProcessTurn_PreMove()
+{
+	if (FirePreMove)
+	{
+		Fire();
+	}
+}
+
 void UAutoWeapon::ProcessTurn_PostMove()
 {
-	UTileMover* Mover = Cast<UTileMover>( GetOwner()->GetComponentByClass( UTileMover::StaticClass() ) );
+	if (!FirePreMove)
+	{
+		Fire();
+	}
+}
+void UAutoWeapon::Fire()
+{
+	UTileMover* Mover = Cast<UTileMover>(GetOwner()->GetComponentByClass(UTileMover::StaticClass()));
 	// get hexes in arc
-	for (FVector2D TilePosition : TargetedTiles)
-	{ 
-		// apply damage to targets
-		for (int i = 0; i < Mover->Facing; i++)
-		{
-			Rotate60DegreesClockwise(TilePosition);
-		}
-		TilePosition += Mover->CurrentTile->Coordinates;
 
-		ATile* TargetTile = AGrid::GetStaticGrid()->GetTileByCoordinates(TilePosition);
-		
-		if (TargetTile != nullptr && TargetTile->Occupier != nullptr)
+	for (int32 r = RangeMin; r <= RangeMax; r++)
+	{
+		for (int32 i = ArcStart; i <= ArcStop; i++)
 		{
-			UDamagable* TargetComponent = Cast<UDamagable>(TargetTile->Occupier->GetComponentByClass(UDamagable::StaticClass()));
-			if (TargetComponent != nullptr)
+			int32 dir = i + Mover->Facing;
+			while (dir < 0) { dir += 6; }
+			dir %= 6;
+			ATile* StartTile = AGrid::GetStaticGrid()->GetTileInDirection(Mover->CurrentTile.Get(), dir, r);
+
+			for (int32 j = 0; j < (i == ArcStop ? 1 : r); j++)
 			{
-				TargetComponent->ApplyDamage( Damage, GetOwner()->GetActorLocation() );
+				int iNextDir = (dir + 1) % 6;
+				ATile* TargetTile = AGrid::GetStaticGrid()->GetTileInDirection(StartTile, iNextDir, j);
+				AActor* TargetActor = (TargetTile != nullptr) ? TargetTile->Occupier.Get() : nullptr;
+				UDamagable* TargetComponent = (TargetActor != nullptr) ? Cast<UDamagable>(TargetActor->GetComponentByClass(UDamagable::StaticClass())) : nullptr;
+				if (TargetComponent && Alliegance::IsHostile(Mover->Alliegence, TargetComponent->Alliegence))
+				{
+					TargetComponent->ApplyDamage(Damage, GetOwner()->GetActorLocation());
+					// Play PFX
 
-				// Play PFX
-
+				}
 			}
 		}
 	}

@@ -2,22 +2,11 @@
 
 #pragma once
 
+#include "Alliegance.h"
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
 class AGrid;
-
-UENUM(BlueprintType)
-enum class EAllieganceEnum : uint8
-{
-	AE_Player 	UMETA(DisplayName = "Player"),
-	AE_Ally 	UMETA(DisplayName = "Ally"),
-	AE_Neutral	UMETA(DisplayName = "Neutral"),
-	AE_Enemy	UMETA(DisplayName = "Enemy"),
-	AE_None		UMETA(DisplayName = "None"),
-
-	Count
-};
 
 UCLASS()
 class AAPA2_API ATile : public AActor

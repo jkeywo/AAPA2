@@ -8,6 +8,26 @@
 #include "Combat/Weapon.h"
 #include "TileMover.h"
 
+void AAAPA2GameMode::StartPlay()
+{
+	Super::StartPlay();
+	TurnTimer = 0.0f;
+	TurnCounter = 0;
+}
+void AAAPA2GameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (TurnTimer > 0.0f)
+	{
+		TurnTimer -= DeltaSeconds;
+		GetWorld()->GetWorldSettings()->TimeDilation = 1.0f;
+	}
+	else
+	{
+		GetWorld()->GetWorldSettings()->TimeDilation = 0.0f;
+	}
+}
+
 void AAAPA2GameMode::RegisterWeapon(UWeapon* Weapon)
 {
 	AllWeapons[static_cast<uint8>(Weapon->Alliegence)].Add(Weapon);
@@ -65,5 +85,12 @@ void AAAPA2GameMode::ProcessTurn()
 		{
 			Weapon->ProcessTurn_PostMove();
 		}
-	}	
+	}
+	TurnTimer = 1.0f;
+	TurnCounter += 1;
+}
+
+TSet< UDamagable* >& AAAPA2GameMode::GetTargets(EAllieganceEnum Alliegance)
+{
+	return AllTargets[static_cast<uint8>(Alliegance)];
 }

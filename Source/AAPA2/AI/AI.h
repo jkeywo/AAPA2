@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Grid/Tile.h"
+#include "Alliegance.h"
 #include "Components/ActorComponent.h"
 #include "AI.generated.h"
 

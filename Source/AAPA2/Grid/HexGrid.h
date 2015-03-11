@@ -19,7 +19,7 @@ public:
 	virtual bool ContainsTile(ATile* Tile) override;
 	virtual ATile* GetTileByIndex(int32 iIndex) override;
 	virtual ATile* GetTileByCoordinates(FVector2D Coordinates) override;
-	virtual ATile* GetTileInDirection(ATile* Tile, int32 Direction) override;
+	virtual ATile* GetTileInDirection(ATile* Tile, int32 Direction, int32 Distance = 1) override;
 	virtual ATile* GetTileFromWorldPosition(FVector Position) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Grid)

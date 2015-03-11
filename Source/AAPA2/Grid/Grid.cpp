@@ -43,7 +43,7 @@ ATile* AGrid::GetTileByCoordinates(FVector2D Coordinates)
 	return nullptr;
 }
 
-ATile* AGrid::GetTileInDirection(ATile* Tile, int32 Direction)
+ATile* AGrid::GetTileInDirection(ATile* Tile, int32 Direction, int32 Distance /*= 1*/)
 {
 	return nullptr;
 }

@@ -37,12 +37,12 @@ const FVector WorldSpaceCorners[] =
 };
 const FVector2D HexSpaceNeighbours[] =
 {
-	FVector2D( 1,  0),
 	FVector2D( 0,  1),
 	FVector2D(-1,  1),
-	FVector2D(1, -1),
-	FVector2D(0, -1),
-	FVector2D(-1, 0)
+	FVector2D(-1,  0),
+	FVector2D( 0, -1),
+	FVector2D( 1, -1),
+	FVector2D( 1,  0)
 };
 
 void AHexGrid::OnConstruction(const FTransform& Transform)
@@ -92,10 +92,10 @@ ATile* AHexGrid::GetTileByCoordinates(FVector2D Coordinates)
 	int32 Index = CoordinatesToIndex(Coordinates);
 	return Tiles.IsValidIndex(Index) ? Tiles[Index] : nullptr;
 }
-ATile* AHexGrid::GetTileInDirection(ATile* Tile, int32 Direction)
+ATile* AHexGrid::GetTileInDirection(ATile* Tile, int32 Direction, int32 Distance /*= 1*/)
 {
 	int Index = Tile->Index;
-	FVector2D Coordinates = IndexToCoordinates(Index) + HexSpaceNeighbours[Direction];
+	FVector2D Coordinates = IndexToCoordinates(Index) + (HexSpaceNeighbours[Direction] * Distance);
 	Index = CoordinatesToIndex(Coordinates);
 	return Tiles.IsValidIndex(Index) ? Tiles[Index] : nullptr;
 }

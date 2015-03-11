@@ -49,6 +49,7 @@ void UTileMover::UninitializeComponent()
 	{
 		GameMode->UnregisterMover(this);
 	}
+	SetOccupiedTile(nullptr);
 }
 
 
@@ -69,8 +70,8 @@ void UTileMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorComp
 		}
 		else
 		{
-			GetOwner()->SetActorLocation(FMath::Lerp(CurrentTile->GetActorLocation(), TargetTile->GetActorLocation(), MoveProgress));
-			FRotator xTargetDir = (TargetTile->GetActorLocation() - CurrentTile->GetActorLocation()).Rotation();
+			GetOwner()->SetActorLocation(FMath::Lerp(PreviousPosition, TargetTile->GetActorLocation(), MoveProgress));
+			FRotator xTargetDir = (TargetTile->GetActorLocation() - PreviousPosition).Rotation();
 			GetOwner()->SetActorRotation(FMath::Lerp(GetOwner()->GetActorRotation(), xTargetDir, MoveProgress));
 		}
 	}
@@ -134,7 +135,10 @@ void UTileMover::ProcessTurn()
 
 void UTileMover::SetOccupiedTile(ATile* Tile)
 {
-	check(Tile != nullptr);
+	if (GetOwner())
+	{
+		PreviousPosition = GetOwner()->GetActorLocation();
+	}
 	if (CurrentTile.Get() && CurrentTile.Get()->Occupier == GetOwner())
 	{
 		CurrentTile->Occupier = nullptr;
@@ -152,5 +156,6 @@ void UTileMover::SnapToTile(ATile* Tile)
 	if (Tile != nullptr)
 	{
 		GetOwner()->SetActorLocation(Tile->GetActorLocation());
+		PreviousPosition = Tile->GetActorLocation();
 	}
 }

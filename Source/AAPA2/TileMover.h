@@ -46,4 +46,5 @@ protected:
 
 	float MoveProgress;
 	TWeakObjectPtr<ATile> TargetTile;
+	FVector PreviousPosition;
 };
