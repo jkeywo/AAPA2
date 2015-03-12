@@ -4,6 +4,7 @@
 
 #include "Grid/Grid.h"
 #include "Grid/Tile.h"
+#include "TempActorManager.h"
 
 void UWave::ProcessTurn()
 {
@@ -44,6 +45,8 @@ void UWave::ProcessTurn()
 				{
 					Enemy->AttachRootComponentToActor(GetOwner());
 					Enemy->SetActorLocation(Position);
+
+					TempActorManager::AddParticle(GetWorld(), WaveInPFX, Position, Tile->GetActorRotation(), 0.9f);
 				}
 			}
 		}

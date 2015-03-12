@@ -137,6 +137,10 @@ int32 AHexGrid::GetArrayCenter()
 }
 void AHexGrid::HighlightPathTo(AActor* From, ATile* Target)
 {
+	if (From == nullptr || Target == nullptr)
+	{
+		return;
+	}
 	for (ATile* Tile : Tiles)
 	{
 		if (Tile)

@@ -4,6 +4,7 @@
 #include "Damagable.h"
 
 #include "AAPA2GameMode.h"
+#include "TempActorManager.h"
 
 // Sets default values for this component's properties
 UDamagable::UDamagable()
@@ -61,7 +62,7 @@ void UDamagable::ProcessTurn()
 	}
 }
 
-void UDamagable::ApplyDamage(int32 Amount, FVector Origin)
+bool UDamagable::ApplyDamage(int32 Amount, FVector Origin)
 {
 	FVector HitDirection = Origin - GetOwner()->GetActorLocation();
 	HitDirection.Normalize();
@@ -87,9 +88,9 @@ void UDamagable::ApplyDamage(int32 Amount, FVector Origin)
 	{
 		Side = 3;
 	}
-	ApplyDamageToSide(Amount, Side);
+	return ApplyDamageToSide(Amount, Side);
 }
-void UDamagable::ApplyDamageToSide(int32 Amount, int32 Side)
+bool UDamagable::ApplyDamageToSide(int32 Amount, int32 Side)
 {
 	while (Amount > 0)
 	{
@@ -110,10 +111,16 @@ void UDamagable::ApplyDamageToSide(int32 Amount, int32 Side)
 			HullState -= 1;
 			if (HullState == 0)
 			{
-				OnDestroyed.Broadcast();
+				if (DestroyedPFX != nullptr)
+				{
+					TempActorManager::AddParticle(GetWorld(), DestroyedPFX, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), 1.9f);
+				}
+				TempActorManager::AddActor(GetOwner(), 0.9f);
+				return true;
 			}
 		}
 		Amount -= 1;
 	}
+	return false;
 }
 

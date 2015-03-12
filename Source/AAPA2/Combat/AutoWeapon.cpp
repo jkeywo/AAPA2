@@ -5,6 +5,7 @@
 
 #include "Combat/Damagable.h"
 #include "Grid/Grid.h"
+#include "TempActorManager.h"
 #include "TileMover.h"
 
 void Rotate60DegreesClockwise(FVector2D& Position)
@@ -16,12 +17,11 @@ void Rotate60DegreesClockwise(FVector2D& Position)
 
 void UAutoWeapon::ProcessTurn_PreMove()
 {
-	while (Beams.Num() > 0)
+	while(Beams.Num() > 0)
 	{
-		UParticleSystemComponent* ParticleTemp = Beams.Pop();
-		ParticleTemp->DestroyComponent();
+		Beams.Pop()->DestroyComponent();
 	}
-	
+
 	if (FirePreMove)
 	{
 		Fire();
@@ -57,11 +57,18 @@ void UAutoWeapon::Fire()
 				UDamagable* TargetComponent = (TargetActor != nullptr) ? Cast<UDamagable>(TargetActor->GetComponentByClass(UDamagable::StaticClass())) : nullptr;
 				if (TargetComponent && Alliegance::IsHostile(Mover->Alliegence, TargetComponent->Alliegence))
 				{
-					TargetComponent->ApplyDamage(Damage, GetOwner()->GetActorLocation());
-
+					bool Destroyed = TargetComponent->ApplyDamage(Damage, GetOwner()->GetActorLocation());
 					UParticleSystemComponent* ParticleTemp = UGameplayStatics::SpawnEmitterAttached(Beam, 
 						GetOwner()->GetRootComponent(), NAME_None, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), 
 						EAttachLocation::KeepWorldPosition, true);
+
+					if (Destroyed)
+					{
+						AActor* NewActor = World->SpawnActor<AActor>(AActor::StaticClass(), TargetActor->GetActorLocation(), TargetActor->GetActorRotation());
+						TempActorManager::AddActor(NewActor, 0.9f);
+						TargetActor = NewActor;
+					}
+
 					if (ParticleTemp)
 					{
 						ParticleTemp->InstanceParameters.Add(FParticleSysParam());

@@ -21,6 +21,7 @@ class AAPA2_API AAAPA2GameMode : public AGameMode
 public:
 	virtual void StartPlay();
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
 	virtual void RegisterWeapon( UWeapon* Weapon );
 	virtual void UnregisterWeapon( UWeapon* Weapon );

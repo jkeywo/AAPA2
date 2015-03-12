@@ -22,4 +22,6 @@ public:
 	int32 Duration;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Wave)
 	int32 SpawnRate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Wave)
+	UParticleSystem* WaveInPFX;
 };

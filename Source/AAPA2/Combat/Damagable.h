@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "Damagable.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class AAPA2_API UDamagable : public UActorComponent
 {
@@ -22,10 +21,10 @@ public:
 
 	virtual void ProcessTurn();
 
-	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual void ApplyDamage( int32 Amount, FVector Origin );
-	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual void ApplyDamageToSide(int32 Amount, int32 Side);
+	UFUNCTION(BlueprintCallable, Category = Damage)
+	virtual bool ApplyDamage(int32 Amount, FVector Origin);
+	UFUNCTION(BlueprintCallable, Category = Damage)
+	virtual bool ApplyDamageToSide(int32 Amount, int32 Side);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAllieganceEnum Alliegence;
@@ -48,9 +47,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Current Health")
 	int32 HullState;
 
-	//UFUNCTION(BlueprintImplementableEvent, Category = Events)
-	//virtual void DamagableDestroyed();
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDestroyedDelegate);
-	UPROPERTY(BlueprintAssignable, Category = "Event")
-	FOnDestroyedDelegate OnDestroyed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Death")
+	UParticleSystem* DestroyedPFX;
 };

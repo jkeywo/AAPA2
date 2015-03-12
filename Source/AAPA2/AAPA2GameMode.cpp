@@ -6,6 +6,7 @@
 #include "AI/AI.h"
 #include "Combat/Damagable.h"
 #include "Combat/Weapon.h"
+#include "TempActorManager.h"
 #include "TileMover.h"
 
 void AAAPA2GameMode::StartPlay()
@@ -13,10 +14,14 @@ void AAAPA2GameMode::StartPlay()
 	Super::StartPlay();
 	TurnTimer = 0.0f;
 	TurnCounter = 0;
+	TempActorManager::Initialise();
 }
 void AAAPA2GameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	
+	TempActorManager::Tick(DeltaSeconds);
+
 	if (TurnTimer > 0.0f)
 	{
 		TurnTimer -= DeltaSeconds;
@@ -26,6 +31,11 @@ void AAAPA2GameMode::Tick(float DeltaSeconds)
 	{
 		GetWorld()->GetWorldSettings()->TimeDilation = 0.0f;
 	}
+}
+void AAAPA2GameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	TempActorManager::Shutdown();
 }
 
 void AAAPA2GameMode::RegisterWeapon(UWeapon* Weapon)
