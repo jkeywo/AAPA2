@@ -46,7 +46,11 @@ void UWave::ProcessTurn()
 					Enemy->AttachRootComponentToActor(GetOwner());
 					Enemy->SetActorLocation(Position);
 
-					TempActorManager::AddParticle(GetWorld(), WaveInPFX, Position, Tile->GetActorRotation(), 0.9f);
+					AActor* TempActor = GetWorld()->SpawnActor<AActor>(AActor::StaticClass(), Position, Tile->GetActorRotation());
+					USceneComponent* NewComponent = NewObject<USceneComponent>(TempActor);
+					TempActor->SetRootComponent(NewComponent);
+					TempActor->SetActorLocation(Position);
+					TempActorManager::AddParticle(TempActor, WaveInPFX, Position, Tile->GetActorRotation(), 0.9f);
 				}
 			}
 		}

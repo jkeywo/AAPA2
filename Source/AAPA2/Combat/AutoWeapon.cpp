@@ -38,6 +38,10 @@ void UAutoWeapon::ProcessTurn_PostMove()
 void UAutoWeapon::Fire()
 {
 	UTileMover* Mover = Cast<UTileMover>(GetOwner()->GetComponentByClass(UTileMover::StaticClass()));
+	if (Mover == nullptr)
+	{
+		return;
+	}
 	// get hexes in arc
 
 	for (int32 r = RangeMin; r <= RangeMax; r++)
@@ -57,6 +61,7 @@ void UAutoWeapon::Fire()
 				UDamagable* TargetComponent = (TargetActor != nullptr) ? Cast<UDamagable>(TargetActor->GetComponentByClass(UDamagable::StaticClass())) : nullptr;
 				if (TargetComponent && Alliegance::IsHostile(Mover->Alliegence, TargetComponent->Alliegence))
 				{
+					FVector TargetPosition = TargetActor->GetActorLocation();
 					bool Destroyed = TargetComponent->ApplyDamage(Damage, GetOwner()->GetActorLocation());
 					UParticleSystemComponent* ParticleTemp = UGameplayStatics::SpawnEmitterAttached(Beam, 
 						GetOwner()->GetRootComponent(), NAME_None, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), 
@@ -64,7 +69,10 @@ void UAutoWeapon::Fire()
 
 					if (Destroyed)
 					{
-						AActor* NewActor = World->SpawnActor<AActor>(AActor::StaticClass(), TargetActor->GetActorLocation(), TargetActor->GetActorRotation());
+						AActor* NewActor = World->SpawnActor<AActor>(AActor::StaticClass(), TargetPosition, FRotator::ZeroRotator);
+						USceneComponent* NewComponent = NewObject<USceneComponent>(NewActor);
+						NewActor->SetRootComponent(NewComponent);
+						NewActor->SetActorLocation(TargetPosition);
 						TempActorManager::AddActor(NewActor, 0.9f);
 						TargetActor = NewActor;
 					}

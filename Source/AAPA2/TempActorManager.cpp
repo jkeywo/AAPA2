@@ -33,15 +33,13 @@ void TempActorManager::AddActor(AActor* Actor, float Duration)
 {
 	ActorDataArray.Add(ActorData(Actor, Duration));
 }
-UParticleSystemComponent* TempActorManager::AddParticle(UWorld* World, UParticleSystem* Particles, FVector Position, FRotator Orientation, float Duration)
+UParticleSystemComponent* TempActorManager::AddParticle(AActor* TempActor, UParticleSystem* Particles, FVector Position, FRotator Orientation, float Duration)
 {
-	AActor* NewActor = World->SpawnActor<AActor>(AActor::StaticClass(), Position, Orientation);
-
 	UParticleSystemComponent* NewParticle = UGameplayStatics::SpawnEmitterAttached(Particles,
-		NewActor->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator,
+		TempActor->GetRootComponent(), NAME_None, Position, Orientation,
 		EAttachLocation::KeepWorldPosition, true);
 
-	ActorDataArray.Add(ActorData(NewActor, Duration));
+	ActorDataArray.Add(ActorData(TempActor, Duration));
 
 	return NewParticle;
 }

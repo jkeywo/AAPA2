@@ -38,6 +38,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Starting Health")
 	bool HasArmour;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Starting Health")
+	bool HasDirectionalArmour;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Starting Health")
 	int32 MaxHull;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Current Health")

@@ -25,7 +25,6 @@ void AAAPA2GameMode::Tick(float DeltaSeconds)
 	if (TurnTimer > 0.0f)
 	{
 		TurnTimer -= DeltaSeconds;
-		GetWorld()->GetWorldSettings()->TimeDilation = 1.0f;
 	}
 	else
 	{
@@ -98,6 +97,7 @@ void AAAPA2GameMode::ProcessTurn()
 	}
 	TurnTimer = 1.0f;
 	TurnCounter += 1;
+	GetWorld()->GetWorldSettings()->TimeDilation = 1.0f;
 }
 
 TSet< UDamagable* >& AAAPA2GameMode::GetTargets(EAllieganceEnum Alliegance)

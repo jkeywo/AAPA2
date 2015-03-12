@@ -14,7 +14,7 @@ public:
 	static void Shutdown();
 
 	static void AddActor(AActor* Actor, float Duration);
-	static UParticleSystemComponent* AddParticle(UWorld* World, UParticleSystem* Particles, FVector Position, FRotator Orientation, float Duration);
+	static UParticleSystemComponent* AddParticle(AActor* Actor, UParticleSystem* Particles, FVector Position, FRotator Orientation, float Duration);
 
 protected:
 	struct ActorData
