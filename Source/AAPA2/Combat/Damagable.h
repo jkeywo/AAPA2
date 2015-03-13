@@ -51,4 +51,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Death")
 	UParticleSystem* DestroyedPFX;
+
+	UFUNCTION(BlueprintCallable, Category = Repair)
+	bool CanRepair();
+	UFUNCTION(BlueprintCallable, Category = Repair)
+	void Repair();
+
 };

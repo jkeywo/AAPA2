@@ -4,6 +4,7 @@
 #include "Damagable.h"
 
 #include "Combat/Weapon.h"
+#include "Grid/Grid.h"
 #include "AAPA2GameMode.h"
 #include "TempActorManager.h"
 #include "TileMover.h"
@@ -158,3 +159,44 @@ bool UDamagable::ApplyDamageToSide(int32 Amount, int32 Side)
 	return false;
 }
 
+bool UDamagable::CanRepair()
+{
+	// search adjacent tiles for allied tile movers
+	AGrid* Grid = AGrid::GetStaticGrid();
+	ATile* MyTile = Grid->GetTileFromWorldPosition(GetOwner()->GetActorLocation());
+	for (int32 i = 0; i < 6; i++)
+	{
+		ATile* Tile = Grid->GetTileInDirection(MyTile, i);
+		if (Tile != nullptr && Tile->Occupier != nullptr)
+		{
+			UTileMover* TargetComponent = Cast<UTileMover>(Tile->Occupier->GetComponentByClass(UTileMover::StaticClass()));
+			if (TargetComponent != nullptr && TargetComponent->Alliegence == EAllieganceEnum::AE_Ally)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+void UDamagable::Repair()
+{
+	// search adjacent tiles for allied tile movers
+	AGrid* Grid = AGrid::GetStaticGrid();
+	ATile* MyTile = Grid->GetTileFromWorldPosition(GetOwner()->GetActorLocation());
+	for (int32 i = 0; i < 6; i++)
+	{
+		ATile* Tile = Grid->GetTileInDirection(MyTile, i);
+		if (Tile != nullptr && Tile->Occupier != nullptr)
+		{
+			UTileMover* TargetComponent = Cast<UTileMover>(Tile->Occupier->GetComponentByClass(UTileMover::StaticClass()));
+			if (TargetComponent != nullptr && TargetComponent->Alliegence == EAllieganceEnum::AE_Ally)
+			{
+				for (bool& Armour : ArmourStates)
+				{
+					Armour = true;
+				}
+				return;
+			}
+		}
+	}
+}

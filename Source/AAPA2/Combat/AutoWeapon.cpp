@@ -7,6 +7,18 @@
 #include "Grid/Grid.h"
 #include "TempActorManager.h"
 #include "TileMover.h"
+#include "FuelComponent.h"
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+bool RequiresActivation;
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+int32 FuelCost;
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+bool Active;
+
+
+
 
 void Rotate60DegreesClockwise(FVector2D& Position)
 {
@@ -42,8 +54,24 @@ void UAutoWeapon::Fire()
 	{
 		return;
 	}
-	// get hexes in arc
 
+	if (RequiresActivation && !Active)
+	{
+		return;
+	}
+	Active = false;
+
+	if (FuelCost > 0)
+	{
+		UFuelComponent* Fuel = Cast<UFuelComponent>(GetOwner()->GetComponentByClass(UFuelComponent::StaticClass()));
+		if (Fuel == nullptr || Fuel->CurrentFuel < FuelCost)
+		{
+			return;
+		}
+		Fuel->CurrentFuel -= FuelCost;
+	}
+
+	// get hexes in arc
 	for (int32 r = RangeMin; r <= RangeMax; r++)
 	{
 		for (int32 i = ArcStart; i <= ArcStop; i++)

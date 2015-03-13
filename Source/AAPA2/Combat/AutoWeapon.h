@@ -32,6 +32,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	UParticleSystem* Beam;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	bool RequiresActivation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	int32 FuelCost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	bool Active;
+
+
 protected:
 	void Fire();
 
