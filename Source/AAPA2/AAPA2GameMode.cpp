@@ -12,6 +12,16 @@
 void AAAPA2GameMode::StartPlay()
 {
 	Super::StartPlay();
+
+	if (GEngine)
+	{
+		UGameUserSettings* MyGameSettings = GEngine->GetGameUserSettings();
+		MyGameSettings->SetScreenResolution(FIntPoint(1600, 1024));
+		MyGameSettings->SetFullscreenMode(EWindowMode::Fullscreen);
+		MyGameSettings->SetVSyncEnabled(true);
+		MyGameSettings->ApplySettings(false);
+	}
+
 	TurnTimer = 0.0f;
 	TurnCounter = 0;
 	TempActorManager::Initialise();

@@ -18,8 +18,13 @@ You score 1 point for each enemy killed and win when you hit 85 points.
 Enemies move 1 hex towards you each turn and will do one damage if you adjacent to them after you move.
 Enemies only have 1 hit point.
 
+Alt+F4 to exit, sorry.
+
+Hold right mouse for camera controls and middle mouse wheel to zoom in/out.
+It's recommended you play zoomed out and top down though.
 
 KNOWN BUGS
 ----------
 When you teleport laser beams stretch to your new position (cosmetic).
 Random crash in the later game (too late for most people to hit, hopefully).
+Clicking on the intro screen, somewhere other than the play button, can cause a crash.
