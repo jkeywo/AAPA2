@@ -11,9 +11,6 @@ UAI::UAI()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	bWantsInitializeComponent = true;
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -22,30 +19,21 @@ void UAI::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	AAAPA2GameMode* GameMode = GameMode = GetWorld() ? Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode()) : nullptr;
 	if (GameMode != nullptr)
 	{
 		GameMode->RegisterAI(this);
 	}
 }
-void UAI::UninitializeComponent()
+void UAI::DestroyComponent(bool bPromoteChildren /*= false*/)
 {
-	Super::UninitializeComponent();
+	Super::DestroyComponent(bPromoteChildren);
 
-	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	AAAPA2GameMode* GameMode = GameMode = GetWorld() ? Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode()) : nullptr;
 	if (GameMode != nullptr)
 	{
 		GameMode->UnregisterAI(this);
 	}
 }
 
-
-
-// Called every frame
-void UAI::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
-{
-	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
-
-	// ...
-}
 

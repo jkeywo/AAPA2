@@ -26,11 +26,11 @@ void UWeapon::InitializeComponent()
 		GameMode->RegisterWeapon(this);
 	}
 }
-void UWeapon::UninitializeComponent()
+void UWeapon::DestroyComponent(bool bPromoteChildren /*= false*/)
 {
-	Super::UninitializeComponent();
+	Super::DestroyComponent(bPromoteChildren);
 
-	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	AAAPA2GameMode* GameMode = GetWorld() ? Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode()) : nullptr;
 	if (GameMode != nullptr)
 	{
 		GameMode->UnregisterWeapon(this);

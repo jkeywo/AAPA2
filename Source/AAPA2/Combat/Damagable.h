@@ -17,7 +17,7 @@ public:
 
 	// Called when the game starts
 	virtual void InitializeComponent() override;
-	virtual void UninitializeComponent() override;
+	virtual void DestroyComponent(bool bPromoteChildren = false) override;
 
 	virtual void ProcessTurn();
 

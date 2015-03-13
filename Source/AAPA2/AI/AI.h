@@ -18,10 +18,7 @@ public:
 
 	// Called when the game starts
 	virtual void InitializeComponent() override;
-	virtual void UninitializeComponent() override;
-
-	// Called every frame
-	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+	virtual void DestroyComponent(bool bPromoteChildren = false) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAllieganceEnum Alliegence;

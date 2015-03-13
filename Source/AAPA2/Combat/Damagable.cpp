@@ -23,7 +23,7 @@ void UDamagable::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	AAAPA2GameMode* GameMode = GetWorld() ? Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode()) : nullptr;
 	if (GameMode != nullptr)
 	{
 		GameMode->RegisterTarget(this);
@@ -44,11 +44,11 @@ void UDamagable::InitializeComponent()
 	}
 	HullState = MaxHull;
 }
-void UDamagable::UninitializeComponent()
+void UDamagable::DestroyComponent(bool bPromoteChildren /*= false*/)
 {
-	Super::UninitializeComponent();
+	Super::DestroyComponent(bPromoteChildren);
 
-	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	AAAPA2GameMode* GameMode = GetWorld() ? Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode()) : nullptr;
 	if (GameMode != nullptr)
 	{
 		GameMode->UnregisterTarget(this);
@@ -147,7 +147,7 @@ bool UDamagable::ApplyDamageToSide(int32 Amount, int32 Side)
 				}
 
 				APawn* Pawn = Cast<APawn>(GetOwner());
-				if (Pawn != nullptr)
+				if (Pawn != nullptr && Pawn->GetController() != nullptr)
 				{
 					Pawn->GetController()->UnPossess();
 				}

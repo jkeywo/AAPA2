@@ -94,6 +94,10 @@ ATile* AHexGrid::GetTileByCoordinates(FVector2D Coordinates)
 }
 ATile* AHexGrid::GetTileInDirection(ATile* Tile, int32 Direction, int32 Distance /*= 1*/)
 {
+	if (Tile == nullptr)
+	{
+		return nullptr;
+	}
 	int Index = Tile->Index;
 	FVector2D Coordinates = IndexToCoordinates(Index) + (HexSpaceNeighbours[Direction] * Distance);
 	Index = CoordinatesToIndex(Coordinates);

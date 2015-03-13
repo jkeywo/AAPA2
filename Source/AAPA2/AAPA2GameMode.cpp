@@ -67,6 +67,8 @@ void AAAPA2GameMode::RegisterAI(UAI* AI)
 }
 void AAAPA2GameMode::UnregisterAI(UAI* AI)
 {
+	check(AI != nullptr);
+	check(AllAI[static_cast<uint8>(AI->Alliegence)].Contains(AI));
 	AllAI[static_cast<uint8>(AI->Alliegence)].Remove(AI);
 }
 
@@ -76,7 +78,7 @@ void AAAPA2GameMode::ProcessTurn()
 	{
 		for (UAI* AI : AllAI[i])
 		{
-			AI->ProcessTurn();
+			if (AI != nullptr) AI->ProcessTurn();
 		}
 		for (UDamagable* Target : AllTargets[i])
 		{

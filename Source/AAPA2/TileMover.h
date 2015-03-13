@@ -18,7 +18,7 @@ public:
 	UTileMover();
 
 	virtual void InitializeComponent() override;
-	virtual void UninitializeComponent() override;
+	virtual void DestroyComponent(bool bPromoteChildren = false) override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

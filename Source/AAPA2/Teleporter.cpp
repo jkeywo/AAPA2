@@ -22,16 +22,18 @@ void UTeleporter::InitializeComponent()
 	
 }
 
-void UTeleporter::Teleport(ATile* Tile)
+bool UTeleporter::Teleport(ATile* Tile)
 {
 	UFuelComponent* Fuel = Cast<UFuelComponent>(GetOwner()->GetComponentByClass(UFuelComponent::StaticClass()));
 	UTileMover* Mover = Cast<UTileMover>(GetOwner()->GetComponentByClass(UTileMover::StaticClass()));
 	if (Fuel == nullptr || Fuel->CurrentFuel < FuelCost || Mover == nullptr)
 	{
-		return;
+		return false;
 	}
 	// charge fuel
 	Fuel->CurrentFuel -= FuelCost;
 	// teleport
 	Mover->TeleportToTile(Tile);
+
+	return true;
 }

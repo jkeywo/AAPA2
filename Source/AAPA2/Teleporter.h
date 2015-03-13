@@ -17,7 +17,7 @@ public:
 	virtual void InitializeComponent() override;
 
 	UFUNCTION(BlueprintCallable, Category = Teleport)
-	void Teleport(ATile* Tile);
+	bool Teleport(ATile* Tile);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 FuelCost;

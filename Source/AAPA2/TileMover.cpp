@@ -34,17 +34,17 @@ void UTileMover::InitializeComponent()
 		SnapToTile(CurrentTile.Get());
 	}
 
-	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	AAAPA2GameMode* GameMode = GameMode = GetWorld() ? Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode()) : nullptr;
 	if (GameMode != nullptr)
 	{
 		GameMode->RegisterMover(this);
 	}
 }
-void UTileMover::UninitializeComponent()
+void UTileMover::DestroyComponent(bool bPromoteChildren /*= false*/)
 {
-	Super::UninitializeComponent();
+	Super::DestroyComponent(bPromoteChildren);
 
-	AAAPA2GameMode* GameMode = Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode());
+	AAAPA2GameMode* GameMode = GameMode = GetWorld() ? Cast<AAAPA2GameMode>(GetWorld()->GetAuthGameMode()) : nullptr;
 	if (GameMode != nullptr)
 	{
 		GameMode->UnregisterMover(this);
@@ -91,6 +91,7 @@ bool UTileMover::Move(int32 Direction)
 		{
 			TargetTile = NewTile;
 			Facing = Direction;
+			SetOccupiedTile(TargetTile.Get());
 			return true;
 		}
 	}
@@ -123,6 +124,7 @@ bool UTileMover::MoveTowardsTile(ATile* NewTile)
 				TargetTile = NewPath[0];
 			}
 			Facing = Direction;
+			SetOccupiedTile(TargetTile.Get());
 			return true;
 		}
 	}
@@ -146,7 +148,6 @@ void UTileMover::ProcessTurn()
 	if(TargetTile != nullptr)
 	{
 		MoveProgress = 0.0f;
-		SetOccupiedTile(TargetTile.Get());
 	}
 }
 
